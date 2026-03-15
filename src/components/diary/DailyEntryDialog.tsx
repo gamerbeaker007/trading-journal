@@ -1,7 +1,7 @@
 "use client";
 
-import { upsertDailyEntryAction } from "@/lib/db/diary";
 import type { DailyJournalEntry } from "@/generated/prisma";
+import { upsertDailyEntryAction } from "@/lib/db/diary";
 import {
   Button,
   CircularProgress,
@@ -10,8 +10,9 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
-  TextField,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { type Dayjs } from "dayjs";
 import { useState, useTransition } from "react";
 
 export function DailyEntryDialog({
@@ -45,14 +46,13 @@ export function DailyEntryDialog({
       </DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} mt={1}>
-          <TextField
+          <DatePicker
             label="Date"
-            type="date"
-            fullWidth
-            size="small"
-            InputLabelProps={{ shrink: true }}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={dayjs(date)}
+            onChange={(v: Dayjs | null) =>
+              setDate(v?.format("YYYY-MM-DD") ?? today)
+            }
+            slotProps={{ textField: { size: "small", fullWidth: true } }}
           />
           <TextField
             label="Effort / Analysis Notes"

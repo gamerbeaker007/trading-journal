@@ -50,18 +50,20 @@ function NumField({
       fullWidth
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      inputProps={{ step }}
-      InputProps={{
-        endAdornment: end ? (
-          <InputAdornment position="end">{end}</InputAdornment>
-        ) : undefined,
-        startAdornment: tooltip ? (
-          <InputAdornment position="start">
-            <Tooltip title={tooltip}>
-              <InfoOutlinedIcon fontSize="small" color="action" />
-            </Tooltip>
-          </InputAdornment>
-        ) : undefined,
+      slotProps={{
+        htmlInput: { step },
+        input: {
+          endAdornment: end ? (
+            <InputAdornment position="end">{end}</InputAdornment>
+          ) : undefined,
+          startAdornment: tooltip ? (
+            <InputAdornment position="start">
+              <Tooltip title={tooltip}>
+                <InfoOutlinedIcon fontSize="small" color="action" />
+              </Tooltip>
+            </InputAdornment>
+          ) : undefined,
+        },
       }}
     />
   );

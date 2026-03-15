@@ -23,6 +23,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 
 export function TradeViewDialog({
   open,
@@ -33,6 +34,7 @@ export function TradeViewDialog({
   onClose: () => void;
   trade: TradeWithRelations | null;
 }) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   if (!trade) return null;
 
   const entries = parseTranches(trade.entries);
@@ -46,7 +48,7 @@ export function TradeViewDialog({
     stopLoss: trade.stopLoss ?? undefined,
   });
   const snapUrls = (trade.snapshots ?? "")
-    .split(",")
+    .split(/[,\n]/)
     .map((s) => s.trim())
     .filter(Boolean);
   const confluenceNames = trade.confluences.map((tc) => tc.confluence.name);
@@ -206,42 +208,55 @@ export function TradeViewDialog({
             <Grid size={{ xs: 12 }}>
               <Divider sx={{ my: 1 }} />
               <Typography variant="subtitle2" gutterBottom>
-                TradingView Snapshots
+                TradingView Snapshots ({snapUrls.length})
               </Typography>
-              <Stack spacing={1}>
+              <Grid container spacing={1}>
                 {snapUrls.map((url, i) => (
-                  <Box key={i}>
-                    <MuiLink
-                      suppressHydrationWarning
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="caption"
-                      display="block"
-                      mb={0.5}
-                    >
-                      {url}
-                    </MuiLink>
+                  <Grid
+                    key={i}
+                    size={{ xs: 12, sm: snapUrls.length > 1 ? 6 : 12 }}
+                  >
                     <Box
-                      component="img"
-                      src={url}
-                      alt={`Snapshot ${i + 1}`}
                       sx={{
-                        width: "100%",
-                        maxHeight: 400,
-                        objectFit: "contain",
-                        borderRadius: 1,
                         border: "1px solid",
                         borderColor: "divider",
+                        borderRadius: 1,
+                        overflow: "hidden",
+                        cursor: "pointer",
+                        "&:hover": { borderColor: "primary.main" },
                       }}
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display =
-                          "none";
-                      }}
-                    />
-                  </Box>
+                      onClick={() => setPreviewUrl(url)}
+                    >
+                      <Box
+                        component="img"
+                        src={url}
+                        alt={`Snapshot ${i + 1}`}
+                        sx={{
+                          width: "100%",
+                          height: 180,
+                          objectFit: "contain",
+                          display: "block",
+                          bgcolor: "action.selected",
+                        }}
+                      />
+                      <Box sx={{ px: 1, py: 0.5, bgcolor: "action.hover" }}>
+                        <MuiLink
+                          suppressHydrationWarning
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="caption"
+                          display="block"
+                          onClick={(e) => e.stopPropagation()}
+                          noWrap
+                        >
+                          {url}
+                        </MuiLink>
+                      </Box>
+                    </Box>
+                  </Grid>
                 ))}
-              </Stack>
+              </Grid>
             </Grid>
           )}
         </Grid>
@@ -249,6 +264,42 @@ export function TradeViewDialog({
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
+      <Dialog
+        open={!!previewUrl}
+        onClose={() => setPreviewUrl(null)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogTitle>Snapshot Preview</DialogTitle>
+        <DialogContent>
+          <Box
+            component="img"
+            src={previewUrl ?? ""}
+            alt="Snapshot preview"
+            sx={{ width: "100%", objectFit: "contain", maxHeight: "80vh" }}
+          />
+          <Box mt={1}>
+            <MuiLink
+              href={previewUrl ?? ""}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="caption"
+            >
+              Open full size in TradingView ↗
+            </MuiLink>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            href={previewUrl ?? ""}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open in TradingView
+          </Button>
+          <Button onClick={() => setPreviewUrl(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 }

@@ -17,13 +17,15 @@ export function TrancheList({
   tranches,
   onChange,
   priceLabel = "Price",
-  qtyLabel = "Qty ($)",
+  qtyLabel = "Qty",
+  decimals = 8,
 }: {
   label: string;
   tranches: Tranche[];
   onChange: (t: Tranche[]) => void;
   priceLabel?: string;
   qtyLabel?: string;
+  decimals?: number;
 }) {
   const update = (i: number, field: keyof Tranche, val: string) => {
     const next = tranches.map((t, idx) =>
@@ -67,6 +69,11 @@ export function TrancheList({
             size="small"
             sx={{ flex: 1 }}
             value={t.qty ?? ""}
+            slotProps={{
+              htmlInput: {
+                step: parseFloat((10 ** -decimals).toFixed(decimals)),
+              },
+            }}
             onChange={(e) => update(i, "qty", e.target.value)}
           />
           <IconButton
