@@ -1,0 +1,125 @@
+// Trading Journal — Prisma Schema
+// Derived from BitcoinJournal_v1.1_DC.xlsx and Project-24-Journal_v1.1.xlsx
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── Reference / Config Tables ────────────────────────────────────────────────
+
+model Strategy {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  trades Trade[]
+}
+
+// Tradeable asset (BTC, ETH, SOL, stocks, etc.)
+model Asset {
+  id       Int     @id @default(autoincrement())
+  ticker   String  @unique
+  name     String
+  decimals Int     @default(8)
+  trades   Trade[]
+}
+
+// Confluence / confirmation signal catalogue
+model Confluence {
+  id     Int               @id @default(autoincrement())
+  name   String            @unique
+  trades TradeConfluence[]
+}
+
+// Junction table: which confluences are on a trade
+model TradeConfluence {
+  tradeId      Int
+  confluenceId Int
+  trade        Trade      @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  confluence   Confluence @relation(fields: [confluenceId], references: [id], onDelete: Cascade)
+
+  @@id([tradeId, confluenceId])
+}
+
+// ─── Core Trade ───────────────────────────────────────────────────────────────
+
+model Trade {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Asset being traded
+  assetId Int?
+  asset   Asset? @relation(fields: [assetId], references: [id])
+
+  // Dates & timing
+  entryDate DateTime?
+  exitDate  DateTime?
+
+  // Analysis metadata
+  entryPointTF String?
+  analyseTF    String?
+  tradeType    String?
+  strategyId   Int?
+  strategy     Strategy? @relation(fields: [strategyId], references: [id])
+
+  // Order flow context
+  dailyOrderFlow String?
+  orderFlow4h    String?
+  orderFlow1h    String?
+
+  // confluence signals
+  confluences     TradeConfluence[]
+  otherConfluence String?
+
+  // TradingView snapshot URLs (comma-separated)
+  snapshots String?
+
+  // Direction
+  direction String
+
+  // Dynamic tranches stored as JSON arrays: [{price, qty}]
+  entries String?
+  tps     String?
+  exits   String?
+
+  // Stop-loss
+  stopLoss Float?
+
+  // Closed P&L (native asset units + USD equivalent)
+  closedPnlAsset Float?
+  closedPnlUsd   Float?
+
+  // Account tracking
+  accountBalance Float?
+
+  // Emotions & review
+  feelAboutTrade  String?
+  feelGeneral     String?
+  followedPlan    String?
+  happyWithResult String?
+  notes           String?
+}
+
+// ─── Diary / Goals Progress Journal ───────────────────────────────────────────
+
+model DailyJournalEntry {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @unique
+  dayOfWeek String?
+  effort    String? // the daily effort / analysis notes
+  snapshots String? // comma-separated TradingView snapshot URLs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Project Goals ────────────────────────────────────────────────────────────
+
+model ProjectGoal {
+  id        Int      @id @default(autoincrement())
+  goal      String
+  createdAt DateTime @default(now())
+}
