@@ -1,8 +1,15 @@
 "use client";
 
-import { deriveTradeMetrics } from "@/lib/trade-utils";
-import type { TradeWithRelations } from "@/lib/db/trades";
 import type { Asset, Confluence, Strategy } from "@/generated/prisma";
+import type { TradeWithRelations } from "@/lib/db/trades";
+import {
+  fmt,
+  fmtDate,
+  fmtNativePnl,
+  fmtUsd,
+  parseTranches,
+} from "@/lib/journal-utils";
+import { deriveTradeMetrics } from "@/lib/trade-utils";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -17,7 +24,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { fmt, fmtDate, fmtNativePnl, fmtUsd, parseTranches } from "@/lib/journal-utils";
 import { useJournal } from "../../hooks/useJournal";
 import { TradeFormDialog } from "./TradeFormDialog";
 import { TradeViewDialog } from "./TradeViewDialog";
@@ -82,9 +88,9 @@ export function JournalClient({
                 "Avg Entry",
                 "Avg TP",
                 "SL",
-                "PRR",
+                "PRRR",
                 "Avg Exit",
-                "ARR",
+                "ARRR",
                 "P&L",
                 "P&L USD",
                 "Result",
@@ -165,29 +171,29 @@ export function JournalClient({
                     style={{
                       padding: "6px 8px",
                       color:
-                        (metrics.plannedRiskReward ?? 0) >= 2
+                        (metrics.plannedRiskRewardRatio ?? 0) >= 2
                           ? "#4caf50"
-                          : (metrics.plannedRiskReward ?? 0) >= 1
+                          : (metrics.plannedRiskRewardRatio ?? 0) >= 1
                             ? "#ff9800"
                             : "#f44336",
                       fontWeight: 600,
                     }}
                   >
-                    {fmt(metrics.plannedRiskReward, 2)}
+                    {fmt(metrics.plannedRiskRewardRatio, 2)}
                   </td>
                   <td
                     style={{
                       padding: "6px 8px",
                       color:
-                        (metrics.actualRiskReward ?? 0) >= 2
+                        (metrics.actualRiskRewardRatio ?? 0) >= 2
                           ? "#4caf50"
-                          : (metrics.actualRiskReward ?? 0) >= 1
+                          : (metrics.actualRiskRewardRatio ?? 0) >= 1
                             ? "#ff9800"
                             : "#f44336",
                       fontWeight: 600,
                     }}
                   >
-                    {fmt(metrics.actualRiskReward, 2)}
+                    {fmt(metrics.actualRiskRewardRatio, 2)}
                   </td>
                   <td style={{ padding: "6px 8px" }}>
                     {metrics.avgExit ? `$${fmt(metrics.avgExit)}` : "—"}

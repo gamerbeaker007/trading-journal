@@ -48,7 +48,13 @@ export function AddAssetDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth TransitionProps={{ onEnter: resetFields }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
+      fullWidth
+      TransitionProps={{ onEnter: resetFields }}
+    >
       <DialogTitle>Add New Asset</DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} mt={1}>

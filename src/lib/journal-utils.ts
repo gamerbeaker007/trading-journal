@@ -7,7 +7,15 @@ export const TRADE_TYPES = [
 ];
 export const FLOWS = ["Bullish", "Bearish", "Ranging"];
 export const TF_OPTIONS = [
-  "1m", "3m", "5m", "15m", "30m", "1h", "4h", "1D", "1W",
+  "1m",
+  "3m",
+  "5m",
+  "15m",
+  "30m",
+  "1h",
+  "4h",
+  "1D",
+  "1W",
 ];
 
 export function fmt(n: number | null | undefined, d = 2) {
@@ -25,10 +33,13 @@ export function fmtNativePnl(
   const dec = asset?.decimals ?? 8;
   const ticker = asset?.ticker ?? "BTC";
   const symbol =
-    ticker === "BTC" ? "₿"
-    : ticker === "ETH" ? "Ξ"
-    : ticker === "SOL" ? "◎"
-    : "";
+    ticker === "BTC"
+      ? "₿"
+      : ticker === "ETH"
+        ? "Ξ"
+        : ticker === "SOL"
+          ? "◎"
+          : "";
   if (symbol) return `${sign}${symbol} ${abs.toFixed(dec)}`;
   return `${sign}${abs.toFixed(dec)} ${ticker}`;
 }

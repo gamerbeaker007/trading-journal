@@ -23,8 +23,7 @@ export function OptionsSection() {
       </Typography>
       <Typography variant="body2" color="text.secondary" mb={2}>
         These are the fixed dropdown options baked into the Trade Journal form.
-        To customise strategies, use the{" "}
-        <strong>Strategies</strong> tab.
+        To customise strategies, use the <strong>Strategies</strong> tab.
       </Typography>
       <Grid container spacing={2}>
         {Object.entries(OPTIONS_DATA).map(([category, values]) => (

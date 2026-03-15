@@ -14,16 +14,18 @@ export function useAssets() {
   ) => {
     if (!ticker.trim() || !name.trim()) return;
     startTransition(async () => {
-      await createAssetAction(ticker.trim().toUpperCase(), name.trim(), decimals);
+      await createAssetAction(
+        ticker.trim().toUpperCase(),
+        name.trim(),
+        decimals,
+      );
       onSuccess();
     });
   };
 
   const handleDelete = (id: number, ticker: string) => {
     if (
-      !confirm(
-        `Delete asset "${ticker}"? This will unlink it from all trades.`,
-      )
+      !confirm(`Delete asset "${ticker}"? This will unlink it from all trades.`)
     )
       return;
     startTransition(() => deleteAssetAction(id));

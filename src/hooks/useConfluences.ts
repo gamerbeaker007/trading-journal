@@ -1,6 +1,9 @@
 "use client";
 
-import { createConfluenceAction, deleteConfluenceAction } from "@/lib/db/trades";
+import {
+  createConfluenceAction,
+  deleteConfluenceAction,
+} from "@/lib/db/trades";
 import { useTransition } from "react";
 
 export function useConfluences() {
@@ -16,7 +19,9 @@ export function useConfluences() {
 
   const handleDelete = (id: number, name: string) => {
     if (
-      !confirm(`Delete confluence "${name}"? It will be removed from all trades.`)
+      !confirm(
+        `Delete confluence "${name}"? It will be removed from all trades.`,
+      )
     )
       return;
     startTransition(() => deleteConfluenceAction(id));

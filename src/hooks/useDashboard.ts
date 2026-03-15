@@ -1,7 +1,10 @@
 "use client";
 
 import { getDashboardStatsAction, getPnlSeriesAction } from "@/lib/db/trades";
-import type { DashboardStats, PnlPoint } from "@/components/dashboard/DashboardView";
+import type {
+  DashboardStats,
+  PnlPoint,
+} from "@/components/dashboard/DashboardView";
 import type { Asset, Strategy } from "@/generated/prisma";
 import { useState, useTransition } from "react";
 
@@ -52,9 +55,7 @@ export function useDashboard({
 
   const title = [
     selectedAsset ? selectedAsset.ticker : "All Assets",
-    selectedStrategy
-      ? `Strategy: ${selectedStrategy.name}`
-      : "All Strategies",
+    selectedStrategy ? `Strategy: ${selectedStrategy.name}` : "All Strategies",
   ].join(" · ");
 
   return {

@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  calcPositionSection1,
-  calcPositionSection2,
-  type Direction,
-} from "@/lib/trade-calc";
+import { calcPosition, type Direction } from "@/lib/trade-calc";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -118,11 +114,6 @@ function fmt(n: number | null | undefined, decimals = 2, suffix = ""): string {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PositionCalcPage() {
-  // Section 1 — simple risk/position size
-  const [acct1, setAcct1] = useState("100");
-  const [risk1, setRisk1] = useState("1");
-  const [sl1, setSl1] = useState("1");
-
   // Section 2 — exact calc
   const [acct2, setAcct2] = useState("100");
   const [risk2, setRisk2] = useState("1");
@@ -136,19 +127,9 @@ export default function PositionCalcPage() {
 
   const n = (s: string) => parseFloat(s) || 0;
 
-  const s1 = useMemo(
-    () =>
-      calcPositionSection1({
-        accountAmount: n(acct1),
-        riskPct: n(risk1),
-        stopLossPct: n(sl1),
-      }),
-    [acct1, risk1, sl1],
-  );
-
   const s2 = useMemo(
     () =>
-      calcPositionSection2({
+      calcPosition({
         accountAmount: n(acct2),
         riskPct: n(risk2),
         direction,
@@ -178,74 +159,15 @@ export default function PositionCalcPage() {
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Converted from the <strong>Position calc</strong> sheet. Calculates
-        position size, risk, RRR and optional intermediate TP splits.
+        position size, risk, Risk-Reward Ratio and optional intermediate TP
+        splits.
       </Typography>
 
       <Grid container spacing={3}>
-        {/* ── Section 1: Simple SL% calculator ── */}
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Section 1 — Stop Loss % Calculator
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                display="block"
-                mb={2}
-              >
-                Formula: Risk / (StopLoss% / 100)
-              </Typography>
-              <Stack spacing={2}>
-                <NumField
-                  label="Account Amount"
-                  value={acct1}
-                  onChange={setAcct1}
-                  end="$"
-                />
-                <NumField
-                  label="Risk %"
-                  value={risk1}
-                  onChange={setRisk1}
-                  end="%"
-                  tooltip="Percentage of account you are willing to risk"
-                />
-                <NumField
-                  label="Stop Loss %"
-                  value={sl1}
-                  onChange={setSl1}
-                  end="%"
-                />
-              </Stack>
-              <Divider sx={{ my: 2 }} />
-              <Stack spacing={0.5}>
-                <ResultRow
-                  label="Willing to risk"
-                  value={`$${fmt(s1.willingToRisk)}`}
-                />
-                <ResultRow
-                  label="Total position size"
-                  value={`$${fmt(s1.totalAmount)}`}
-                  highlight
-                />
-                <ResultRow
-                  label="Leverage needed"
-                  value={`${fmt(s1.leverageNeeded)}×`}
-                />
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-
         {/* ── Section 2: Exact calc ── */}
         <Grid size={{ xs: 12, md: 7 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Section 2 — Exact Calculation
-              </Typography>
-
               {/* Direction toggle */}
               <Stack direction="row" alignItems="center" spacing={2} mb={2}>
                 <Typography variant="body2">Direction:</Typography>
@@ -344,13 +266,13 @@ export default function PositionCalcPage() {
                       color="success.main"
                     />
                     <ResultRow
-                      label="RRR"
-                      value={fmt(s2.rrr, 3)}
+                      label="Risk-Reward Ratio (RRR)"
+                      value={fmt(s2.plannedRiskReward, 3)}
                       highlight
                       color={
-                        (s2.rrr ?? 0) >= 2
+                        (s2.plannedRiskReward ?? 0) >= 2
                           ? "success.main"
-                          : (s2.rrr ?? 0) >= 1
+                          : (s2.plannedRiskReward ?? 0) >= 1
                             ? "warning.main"
                             : "error.main"
                       }

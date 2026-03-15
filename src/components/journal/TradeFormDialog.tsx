@@ -1,8 +1,15 @@
 "use client";
 
-import { createTradeAction, updateTradeAction } from "@/lib/db/trades";
-import { deriveTradeMetrics, type TradeFormData } from "@/lib/trade-utils";
 import type { Asset, Confluence, Strategy } from "@/generated/prisma";
+import { createTradeAction, updateTradeAction } from "@/lib/db/trades";
+import {
+  emptyForm,
+  FLOWS,
+  fmt,
+  TF_OPTIONS,
+  TRADE_TYPES,
+} from "@/lib/journal-utils";
+import { deriveTradeMetrics, type TradeFormData } from "@/lib/trade-utils";
 import AddIcon from "@mui/icons-material/Add";
 import {
   Alert,
@@ -29,9 +36,8 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState, useTransition } from "react";
-import { emptyForm, fmt, FLOWS, TF_OPTIONS, TRADE_TYPES } from "@/lib/journal-utils";
-import { TrancheList } from "./TrancheList";
 import { AddAssetDialog } from "./AddAssetDialog";
+import { TrancheList } from "./TrancheList";
 
 export function TradeFormDialog({
   open,
@@ -63,8 +69,10 @@ export function TradeFormDialog({
     setAssets(initialAssets);
   }, [initialAssets]);
 
-  const set = <K extends keyof TradeFormData>(field: K, value: TradeFormData[K]) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const set = <K extends keyof TradeFormData>(
+    field: K,
+    value: TradeFormData[K],
+  ) => setForm((prev) => ({ ...prev, [field]: value }));
 
   const toggleConfluence = (id: number) => {
     const ids = form.confluenceIds ?? [];
@@ -74,7 +82,11 @@ export function TradeFormDialog({
     );
   };
 
-  const numField = (label: string, field: keyof TradeFormData, end?: string) => (
+  const numField = (
+    label: string,
+    field: keyof TradeFormData,
+    end?: string,
+  ) => (
     <TextField
       label={label}
       type="number"
@@ -210,7 +222,10 @@ export function TradeFormDialog({
                 sx={{ display: "flex", alignItems: "center" }}
               >
                 <Tooltip title="Add new asset">
-                  <IconButton size="small" onClick={() => setAddAssetOpen(true)}>
+                  <IconButton
+                    size="small"
+                    onClick={() => setAddAssetOpen(true)}
+                  >
                     <AddIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -426,7 +441,9 @@ export function TradeFormDialog({
                       <span>Total Qty: {fmt(metrics.totalQuantity)}</span>
                       <span>Profit %: {fmt(metrics.profitPct)}%</span>
                       <span>SL %: {fmt(metrics.slPct)}%</span>
-                      <span>PRR: {fmt(metrics.plannedRiskReward, 3)}</span>
+                      <span>
+                        PRRR: {fmt(metrics.plannedRiskRewardRatio, 3)}
+                      </span>
                     </Stack>
                   </Alert>
                 </Grid>
@@ -474,7 +491,7 @@ export function TradeFormDialog({
                   >
                     <Stack direction="row" spacing={3} flexWrap="wrap">
                       <span>Avg Exit: ${fmt(metrics.avgExit)}</span>
-                      <span>ARR: {fmt(metrics.actualRiskReward, 3)}</span>
+                      <span>ARRR: {fmt(metrics.actualRiskRewardRatio, 3)}</span>
                       <strong>Result: {metrics.winLoss}</strong>
                     </Stack>
                   </Alert>
@@ -498,9 +515,7 @@ export function TradeFormDialog({
                   {textField(label, field)}
                 </Grid>
               ))}
-              <Grid size={{ xs: 12 }}>
-                {textField("Notes", "notes", true)}
-              </Grid>
+              <Grid size={{ xs: 12 }}>{textField("Notes", "notes", true)}</Grid>
             </Grid>
           )}
         </DialogContent>

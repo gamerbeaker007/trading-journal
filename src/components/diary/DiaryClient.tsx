@@ -76,10 +76,7 @@ export function DiaryClient({
                     alignItems="flex-start"
                     spacing={1}
                   >
-                    <Typography
-                      variant="body2"
-                      sx={{ flexGrow: 1, pt: 0.5 }}
-                    >
+                    <Typography variant="body2" sx={{ flexGrow: 1, pt: 0.5 }}>
                       • {goal.goal}
                     </Typography>
                     <Tooltip title="Remove goal">

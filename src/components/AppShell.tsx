@@ -68,11 +68,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const drawerContent = (
     <>
       <Toolbar>
-        <Typography
-          variant="h6"
-          noWrap
-          sx={{ fontWeight: 700, fontSize: 15 }}
-        >
+        <Typography variant="h6" noWrap sx={{ fontWeight: 700, fontSize: 15 }}>
           📈 Trading Journal
         </Typography>
       </Toolbar>
@@ -175,4 +171,3 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </Box>
   );
 }
-

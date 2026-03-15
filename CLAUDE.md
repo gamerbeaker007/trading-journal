@@ -4,7 +4,7 @@ This file provides guidance for AI assistants (Claude, Copilot, etc.) working on
 
 ## Project Overview
 
-Personal trading journal — Next.js 16 App Router, Prisma + SQLite, Material UI v7, TypeScript 5.  
+Personal trading journal — Next.js 16 App Router, Prisma + SQLite, Material UI v7, TypeScript 5.
 No authentication (single-user, local/self-hosted).
 
 ## Architecture
@@ -58,13 +58,13 @@ All database mutations use Next.js **Server Actions** (`"use server"`). Pages th
 7. Update migration SQL
 
 ### Adding a new asset
-Assets are stored in the `Asset` table (`id, ticker, name, decimals`).  
-Manage them via `/config/assets` in the UI or via `createAssetAction(ticker, name, decimals)`.  
+Assets are stored in the `Asset` table (`id, ticker, name, decimals`).
+Manage them via `/config/assets` in the UI or via `createAssetAction(ticker, name, decimals)`.
 The trade form shows a dropdown of all assets with an inline "+" button to add a new one without leaving the form.
 
 ### Adding a new confluence signal
-Confluences are stored in the `Confluence` table (`id, name`).  
-Manage them via `/config/confluences` in the UI or via `createConfluenceAction(name)`.  
+Confluences are stored in the `Confluence` table (`id, name`).
+Manage them via `/config/confluences` in the UI or via `createConfluenceAction(name)`.
 Trades link to confluences through the `TradeConfluence` junction table.
 
 ### Dashboard filters
@@ -79,10 +79,8 @@ When `assetId` is set, stats aggregate `closedPnlAsset` (native); otherwise `clo
 
 | Label | Code name | Formula |
 |---|---|---|
-| **PRR** (Planned RR) | `rrr` | `expectedProfit / expectedSlCost` (calculated at entry from TP vs SL) |
-| **ARR** (Actual RR) | `realRR` | `(avgExit − avgEntry) / (avgEntry − SL)` (calculated after close) |
-
-Do **not** rename the function names `rrr` / `realRR` in `trade-calc.ts` — they map to Excel column references. UI abbreviations are PRR / ARR.
+| **PRRR** (Planned RRR) | `PRRR` | `expectedProfit / expectedSlCost` (calculated at entry from TP vs SL) |
+| **ARRR** (Actual RRR) | `ARRR` | `(avgExit − avgEntry) / (avgEntry − SL)` (calculated after close) |
 
 ## P&L Fields
 

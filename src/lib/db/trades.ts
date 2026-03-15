@@ -222,8 +222,12 @@ export async function getDashboardStatsAction(
 
   const usd = (t: { closedPnlUsd: number | null }) => t.closedPnlUsd ?? 0;
   const totalPnlUsd = trades.reduce((s, t) => s + usd(t), 0);
-  const amountWin = trades.filter((t) => usd(t) > 0).reduce((s, t) => s + usd(t), 0);
-  const amountLoss = trades.filter((t) => usd(t) < 0).reduce((s, t) => s + usd(t), 0);
+  const amountWin = trades
+    .filter((t) => usd(t) > 0)
+    .reduce((s, t) => s + usd(t), 0);
+  const amountLoss = trades
+    .filter((t) => usd(t) < 0)
+    .reduce((s, t) => s + usd(t), 0);
   const maxWin = Math.max(0, ...trades.map(usd));
   const maxLoss = Math.min(0, ...trades.map(usd));
   const winAvg = winners > 0 ? amountWin / winners : null;

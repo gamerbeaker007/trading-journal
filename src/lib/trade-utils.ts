@@ -1,9 +1,7 @@
 import {
-  expectedProfit,
-  expectedSlCost,
+  applyPct,
   profitPct,
-  realRR as ActualRiskRerward,
-  rrr as plannedRiskReward,
+  RiskRewardRatio,
   slPct,
   totalQty,
   weightedAvg,
@@ -59,17 +57,15 @@ export function deriveTradeMetrics(d: TradeFormData) {
   const slPctVal = sl && avgEntry ? slPct(dir, avgEntry, sl) : null;
   const expSl =
     totalQuantity && slPctVal != null
-      ? expectedSlCost(totalQuantity, slPctVal)
+      ? applyPct(totalQuantity, slPctVal)
       : null;
   const expProfit =
-    totalQuantity && profPct != null
-      ? expectedProfit(totalQuantity, profPct)
-      : null;
-  const prrVal =
-    expProfit != null && expSl != null ? plannedRiskReward(expProfit, expSl) : null;
-  const arrVal =
-    avgEntry && avgExit && sl ? ActualRiskRerward(avgEntry, avgExit, sl) : null;
-  const result = winLoss(arrVal);
+    totalQuantity && profPct != null ? applyPct(totalQuantity, profPct) : null;
+  const prrrVal =
+    avgEntry && avgTp && sl ? RiskRewardRatio(avgEntry, avgTp, sl) : null;
+  const arrrVal =
+    avgEntry && avgExit && sl ? RiskRewardRatio(avgEntry, avgExit, sl) : null;
+  const result = winLoss(arrrVal);
 
   return {
     totalQuantity,
@@ -80,8 +76,8 @@ export function deriveTradeMetrics(d: TradeFormData) {
     slPct: slPctVal,
     expSlCost: expSl,
     expProfit,
-    plannedRiskReward: prrVal,
-    actualRiskReward: arrVal,
+    plannedRiskRewardRatio: prrrVal,
+    actualRiskRewardRatio: arrrVal,
     winLoss: result,
   };
 }

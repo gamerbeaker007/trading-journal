@@ -1,6 +1,13 @@
 "use client";
 
 import type { TradeWithRelations } from "@/lib/db/trades";
+import {
+  fmt,
+  fmtDate,
+  fmtNativePnl,
+  fmtUsd,
+  parseTranches,
+} from "@/lib/journal-utils";
 import { deriveTradeMetrics } from "@/lib/trade-utils";
 import {
   Box,
@@ -16,7 +23,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { fmt, fmtDate, fmtNativePnl, fmtUsd, parseTranches } from "@/lib/journal-utils";
 
 export function TradeViewDialog({
   open,
@@ -119,15 +125,21 @@ export function TradeViewDialog({
               "Avg Exit",
               metrics.avgExit ? `$${fmt(metrics.avgExit)}` : "—",
             )}
-            {row(
-              "Stop Loss",
-              trade.stopLoss ? `$${fmt(trade.stopLoss)}` : "—",
-            )}
+            {row("Stop Loss", trade.stopLoss ? `$${fmt(trade.stopLoss)}` : "—")}
             {row("Profit %", fmt(metrics.profitPct) + "%")}
             {row("SL %", fmt(metrics.slPct) + "%")}
-            {row("PRR (Planned RR)", fmt(metrics.plannedRiskReward, 3))}
-            {row("ARR (Actual RR)", fmt(metrics.actualRiskReward, 3))}
-            {row("P&L (native)", fmtNativePnl(trade.closedPnlAsset, trade.asset))}
+            {row(
+              "PRRR (Planned Risk-Reward Ratio)",
+              fmt(metrics.plannedRiskRewardRatio, 3),
+            )}
+            {row(
+              "ARRR (Actual Risk-Reward Ratio)",
+              fmt(metrics.actualRiskRewardRatio, 3),
+            )}
+            {row(
+              "P&L (native)",
+              fmtNativePnl(trade.closedPnlAsset, trade.asset),
+            )}
             {row("P&L (USD)", fmtUsd(trade.closedPnlUsd))}
             {row(
               "Acct Balance",
@@ -223,9 +235,8 @@ export function TradeViewDialog({
                         borderColor: "divider",
                       }}
                       onError={(e) => {
-                        (
-                          e.currentTarget as HTMLImageElement
-                        ).style.display = "none";
+                        (e.currentTarget as HTMLImageElement).style.display =
+                          "none";
                       }}
                     />
                   </Box>
