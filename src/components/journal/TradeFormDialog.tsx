@@ -68,11 +68,8 @@ export function TradeFormDialog({
   const assetDecimals = selectedAsset?.decimals ?? 8;
   return (
     <>
-
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-
         <DialogTitle>
-
           {initial ? "Edit Trade" : "Log New Trade"}
           {metrics.winLoss !== "NA" && (
             <Chip
@@ -84,14 +81,12 @@ export function TradeFormDialog({
           )}
         </DialogTitle>
         <DialogContent dividers>
-
           <Tabs
             value={tab}
             onChange={(_, v) => setTab(v)}
             sx={{ mb: 2 }}
             variant="scrollable"
           >
-
             <Tab label="Context" /> <Tab label="Trade Preparation (Entry)" />
             <Tab label="Trade Results" /> <Tab label="Psychology" />
           </Tabs>
@@ -127,9 +122,7 @@ export function TradeFormDialog({
           {tab === 3 && <TradePsychologyTab form={form} set={set} />}
         </DialogContent>
         <DialogActions>
-
           <Button onClick={onClose} disabled={isPending}>
-
             Cancel
           </Button>
           <Button
@@ -138,7 +131,6 @@ export function TradeFormDialog({
             disabled={isPending}
             startIcon={isPending ? <CircularProgress size={16} /> : null}
           >
-
             {initial ? "Save Changes" : "Log Trade"}
           </Button>
         </DialogActions>

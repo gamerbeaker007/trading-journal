@@ -1,5 +1,29 @@
 import type { Tranche, TradeFormData } from "@/lib/trade-utils";
 
+export type SnapshotItem = { url: string; comment: string };
+
+export function parseSnapshots(raw: string | null | undefined): SnapshotItem[] {
+  if (!raw) return [];
+  const s = raw.trim();
+  if (s.startsWith("[")) {
+    try {
+      return JSON.parse(s) as SnapshotItem[];
+    } catch {
+      /* fall through */
+    }
+  }
+  // Legacy comma-separated format
+  return s
+    .split(/[,\n]/)
+    .map((u) => ({ url: u.trim(), comment: "" }))
+    .filter((i) => i.url);
+}
+
+export function serializeSnapshots(items: SnapshotItem[]): string | undefined {
+  if (items.length === 0) return undefined;
+  return JSON.stringify(items);
+}
+
 export const TRADE_TYPES = [
   "Swing Trade",
   "Short Term Trade",
@@ -51,7 +75,7 @@ export function fmtUsd(n: number | null | undefined) {
 
 export function fmtDate(d: Date | null | undefined): string {
   if (!d) return "—";
-  const date = d instanceof Date ? d : new Date(d);
+  const date = d;
   const y = date.getUTCFullYear();
   const m = String(date.getUTCMonth() + 1).padStart(2, "0");
   const day = String(date.getUTCDate()).padStart(2, "0");

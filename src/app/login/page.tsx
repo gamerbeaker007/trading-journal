@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { useActionState } from "react";
 
 function LoginForm() {
@@ -21,7 +22,11 @@ function LoginForm() {
       try {
         await signInAction(formData);
         return null;
-      } catch {
+      } catch (error) {
+        if (isRedirectError(error)) {
+          window.location.href = "/";
+          return null;
+        }
         return "Invalid password. Please try again.";
       }
     },

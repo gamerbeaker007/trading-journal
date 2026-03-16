@@ -128,7 +128,11 @@ export function JournalClient({
               return (
                 <tr
                   key={trade.id}
-                  style={{ borderBottom: "1px solid rgba(128,128,128,0.15)" }}
+                  style={{
+                    borderBottom: "1px solid rgba(128,128,128,0.15)",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setViewTrade(trade)}
                 >
                   <td style={{ padding: "6px 8px", whiteSpace: "nowrap" }}>
                     {fmtDate(trade.entryDate)}
@@ -228,7 +232,10 @@ export function JournalClient({
                       />
                     )}
                   </td>
-                  <td style={{ padding: "4px" }}>
+                  <td
+                    style={{ padding: "4px" }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Stack direction="row" spacing={0}>
                       <Tooltip title="View">
                         <IconButton

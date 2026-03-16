@@ -1,11 +1,20 @@
 "use client";
 
 import type { Asset, Confluence, Strategy } from "@/generated/prisma";
-import { FLOWS, TF_OPTIONS, TRADE_TYPES } from "@/lib/journal-utils";
+import {
+  FLOWS,
+  TF_OPTIONS,
+  TRADE_TYPES,
+  parseSnapshots,
+  serializeSnapshots,
+} from "@/lib/journal-utils";
 import type { TradeFormData } from "@/lib/trade-utils";
 import AddIcon from "@mui/icons-material/Add";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
+  Button,
   Chip,
   FormControl,
   Grid,
@@ -13,6 +22,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Stack,
   TextField,
   Tooltip,
   Typography,
@@ -273,28 +283,76 @@ export function TradeContextTab({
         />
       </Grid>
       <Grid size={{ xs: 12 }}>
-        <TextField
-          label="TradingView Snapshots"
-          size="small"
-          fullWidth
-          multiline
-          rows={3}
-          placeholder={
-            "https://www.tradingview.com/x/abc123/\nhttps://www.tradingview.com/x/def456/"
-          }
-          helperText="One URL per line"
-          value={(form.snapshots ?? "").replace(/,\s*/g, "\n")}
-          onChange={(e) =>
-            set(
-              "snapshots",
-              e.target.value
-                .split("\n")
-                .map((s) => s.trim())
-                .filter(Boolean)
-                .join(","),
-            )
-          }
-        />
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={1}
+        >
+          <Typography variant="caption" color="text.secondary">
+            TradingView Snapshots
+          </Typography>
+          <Button
+            size="small"
+            startIcon={<AddPhotoAlternateIcon />}
+            onClick={() => {
+              const imgs = parseSnapshots(form.snapshots);
+              set(
+                "snapshots",
+                serializeSnapshots([...imgs, { url: "", comment: "" }]),
+              );
+            }}
+          >
+            Add Image
+          </Button>
+        </Stack>
+        <Stack spacing={1.5}>
+          {parseSnapshots(form.snapshots).map((img, i) => {
+            const imgs = parseSnapshots(form.snapshots);
+            const updateImage = (field: "url" | "comment", value: string) => {
+              const updated = imgs.map((m, idx) =>
+                idx === i ? { ...m, [field]: value } : m,
+              );
+              set("snapshots", serializeSnapshots(updated));
+            };
+            const removeImage = () => {
+              set(
+                "snapshots",
+                serializeSnapshots(imgs.filter((_, idx) => idx !== i)),
+              );
+            };
+            return (
+              <Stack key={i} spacing={0.5}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <TextField
+                    label={`Image ${i + 1} URL`}
+                    size="small"
+                    fullWidth
+                    value={img.url}
+                    onChange={(e) => updateImage("url", e.target.value)}
+                    placeholder="https://www.tradingview.com/x/..."
+                  />
+                  <IconButton size="small" color="error" onClick={removeImage}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+                <TextField
+                  label="Comment (optional)"
+                  size="small"
+                  fullWidth
+                  value={img.comment}
+                  onChange={(e) => updateImage("comment", e.target.value)}
+                />
+              </Stack>
+            );
+          })}
+          {!parseSnapshots(form.snapshots).length && (
+            <Typography variant="caption" color="text.secondary">
+              No images yet. Click &quot;Add Image&quot; to attach TradingView
+              snapshots.
+            </Typography>
+          )}
+        </Stack>
       </Grid>
     </Grid>
   );

@@ -7,6 +7,7 @@ import {
   fmtNativePnl,
   fmtUsd,
   parseTranches,
+  parseSnapshots,
 } from "@/lib/journal-utils";
 import { deriveTradeMetrics } from "@/lib/trade-utils";
 import {
@@ -47,10 +48,9 @@ export function TradeViewDialog({
     exits,
     stopLoss: trade.stopLoss ?? undefined,
   });
-  const snapUrls = (trade.snapshots ?? "")
-    .split(/[,\n]/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const snapImages = parseSnapshots(trade.snapshots).filter((i) =>
+    i.url.trim(),
+  );
   const confluenceNames = trade.confluences.map((tc) => tc.confluence.name);
 
   const row = (label: string, value: React.ReactNode) => (
@@ -204,17 +204,17 @@ export function TradeViewDialog({
               </Typography>
             )}
           </Grid>
-          {snapUrls.length > 0 && (
+          {snapImages.length > 0 && (
             <Grid size={{ xs: 12 }}>
               <Divider sx={{ my: 1 }} />
               <Typography variant="subtitle2" gutterBottom>
-                TradingView Snapshots ({snapUrls.length})
+                TradingView Snapshots ({snapImages.length})
               </Typography>
               <Grid container spacing={1}>
-                {snapUrls.map((url, i) => (
+                {snapImages.map((img, i) => (
                   <Grid
                     key={i}
-                    size={{ xs: 12, sm: snapUrls.length > 1 ? 6 : 12 }}
+                    size={{ xs: 12, sm: snapImages.length > 1 ? 6 : 12 }}
                   >
                     <Box
                       sx={{
@@ -225,11 +225,11 @@ export function TradeViewDialog({
                         cursor: "pointer",
                         "&:hover": { borderColor: "primary.main" },
                       }}
-                      onClick={() => setPreviewUrl(url)}
+                      onClick={() => setPreviewUrl(img.url)}
                     >
                       <Box
                         component="img"
-                        src={url}
+                        src={img.url}
                         alt={`Snapshot ${i + 1}`}
                         sx={{
                           width: "100%",
@@ -240,9 +240,18 @@ export function TradeViewDialog({
                         }}
                       />
                       <Box sx={{ px: 1, py: 0.5, bgcolor: "action.hover" }}>
+                        {img.comment && (
+                          <Typography
+                            variant="caption"
+                            display="block"
+                            sx={{ mb: 0.25, fontStyle: "italic" }}
+                          >
+                            {img.comment}
+                          </Typography>
+                        )}
                         <MuiLink
                           suppressHydrationWarning
-                          href={url}
+                          href={img.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           variant="caption"
@@ -250,7 +259,7 @@ export function TradeViewDialog({
                           onClick={(e) => e.stopPropagation()}
                           noWrap
                         >
-                          {url}
+                          {img.url}
                         </MuiLink>
                       </Box>
                     </Box>
@@ -278,16 +287,6 @@ export function TradeViewDialog({
             alt="Snapshot preview"
             sx={{ width: "100%", objectFit: "contain", maxHeight: "80vh" }}
           />
-          <Box mt={1}>
-            <MuiLink
-              href={previewUrl ?? ""}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="caption"
-            >
-              Open full size in TradingView ↗
-            </MuiLink>
-          </Box>
         </DialogContent>
         <DialogActions>
           <Button

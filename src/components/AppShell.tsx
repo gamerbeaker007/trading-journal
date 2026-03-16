@@ -1,5 +1,6 @@
 "use client";
 
+import { signOutAction } from "@/actions/auth-actions";
 import { useColorMode } from "@/app/providers";
 import BookIcon from "@mui/icons-material/Book";
 import CalculateIcon from "@mui/icons-material/Calculate";
@@ -7,6 +8,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import TuneIcon from "@mui/icons-material/Tune";
 import {
@@ -22,6 +24,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -64,6 +67,7 @@ function NavList({ onSelect }: { onSelect?: () => void }) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { mode, toggle } = useColorMode();
+  const { status } = useSession();
 
   const drawerContent = (
     <>
@@ -155,6 +159,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
               </IconButton>
             </Tooltip>
+            {status === "authenticated" && (
+              <Tooltip title="Sign out">
+                <IconButton
+                  color="inherit"
+                  onClick={async () => {
+                    try {
+                      await signOutAction();
+                    } catch {
+                      /* redirect */
+                    }
+                    window.location.href = "/login";
+                  }}
+                >
+                  <LogoutIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Toolbar>
         </AppBar>
         <Box

@@ -11,6 +11,7 @@ import { useState, useTransition } from "react";
 export function useDiary() {
   const [entryDialogOpen, setEntryDialogOpen] = useState(false);
   const [editEntry, setEditEntry] = useState<DailyJournalEntry | undefined>();
+  const [viewEntry, setViewEntry] = useState<DailyJournalEntry | null>(null);
   const [newGoal, setNewGoal] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -45,6 +46,8 @@ export function useDiary() {
     entryDialogOpen,
     setEntryDialogOpen,
     editEntry,
+    viewEntry,
+    setViewEntry,
     newGoal,
     setNewGoal,
     isPending,

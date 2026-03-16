@@ -21,7 +21,9 @@ import {
   Typography,
 } from "@mui/material";
 import { DailyEntryDialog } from "./DailyEntryDialog";
-import { useDiary } from "../../hooks/useDiary";
+import { DiaryEntryViewDialog } from "./DiaryEntryViewDialog";
+import { useDiary } from "@/hooks/useDiary";
+import { parseSnapshots } from "@/lib/journal-utils";
 
 export function DiaryClient({
   entries,
@@ -34,6 +36,8 @@ export function DiaryClient({
     entryDialogOpen,
     setEntryDialogOpen,
     editEntry,
+    viewEntry,
+    setViewEntry,
     newGoal,
     setNewGoal,
     isPending,
@@ -145,7 +149,15 @@ export function DiaryClient({
 
           <Stack spacing={2}>
             {entries.map((entry) => (
-              <Card key={entry.id} variant="outlined">
+              <Card
+                key={entry.id}
+                variant="outlined"
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": { borderColor: "primary.main" },
+                }}
+                onClick={() => setViewEntry(entry)}
+              >
                 <CardContent sx={{ pb: "12px !important" }}>
                   <Stack
                     direction="row"
@@ -186,17 +198,8 @@ export function DiaryClient({
                           flexWrap="wrap"
                           mt={0.5}
                         >
-                          {entry.snapshots.split(",").map((url, i) => (
-                            <Chip
-                              key={i}
-                              label={`[${i + 1}]`}
-                              size="small"
-                              component="a"
-                              href={url.trim()}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              clickable
-                            />
+                          {parseSnapshots(entry.snapshots).map((url, i) => (
+                            <Chip key={i} label={`[${i + 1}]`} size="small" />
                           ))}
                         </Stack>
                       )}
@@ -233,6 +236,12 @@ export function DiaryClient({
         open={entryDialogOpen}
         onClose={() => setEntryDialogOpen(false)}
         initial={editEntry}
+        allEntries={entries}
+      />
+      <DiaryEntryViewDialog
+        open={viewEntry !== null}
+        onClose={() => setViewEntry(null)}
+        entry={viewEntry}
       />
     </Box>
   );

@@ -4,6 +4,7 @@ import { darkTheme, lightTheme } from "@/app/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { SessionProvider } from "next-auth/react";
 import React, { createContext, useContext, useMemo, useState } from "react";
 
 type ColorMode = "light" | "dark";
@@ -36,13 +37,15 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const theme = mode === "light" ? lightTheme : darkTheme;
 
   return (
-    <ColorModeContext.Provider value={colorModeValue}>
-      <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <CssBaseline />
-          {children}
-        </LocalizationProvider>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+    <SessionProvider>
+      <ColorModeContext.Provider value={colorModeValue}>
+        <ThemeProvider theme={theme}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <CssBaseline />
+            {children}
+          </LocalizationProvider>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    </SessionProvider>
   );
 }
