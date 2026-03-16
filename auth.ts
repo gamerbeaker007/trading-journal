@@ -7,9 +7,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: { password: { label: "Password", type: "password" } },
       async authorize(credentials) {
         const password = process.env.ADMIN_PASSWORD;
-        if (!password) return null;
+        // If no password is configured, allow open access
+        if (!password) return { id: "admin", name: "Admin" };
         if (credentials?.password !== password) return null;
-        // Single admin user — no DB needed
         return { id: "admin", name: "Admin" };
       },
     }),

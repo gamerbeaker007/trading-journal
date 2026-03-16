@@ -1,5 +1,7 @@
-import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
+
 import { DiaryClient } from "@/components/diary/DiaryClient";
+import { prisma } from "@/lib/prisma";
 
 export default async function DiaryPage() {
   const [entries, goals] = await Promise.all([

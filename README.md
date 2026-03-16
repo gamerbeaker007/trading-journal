@@ -76,6 +76,75 @@ The GitHub Actions workflow (`.github/workflows/docker.yml`) automatically build
 
 Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`.
 
+## Docker Compose Setup
+
+A ready-to-use `compose.yml` is included in the repository root.
+
+1. **Edit the environment variables** in `compose.yml`:
+
+   | Variable | Description |
+   |---|---|
+   | `ADMIN_PASSWORD` | Password shown on the login page. Leave blank to disable login. |
+   | `AUTH_SECRET` | Random secret for session signing. Generate with `openssl rand -base64 32`. |
+
+2. **Start the container** via SSH:
+   ```bash
+   docker compose up -d
+   ```
+3. Open the app at `http://<host>:3000`.
+
+> **Data persistence**: the SQLite database is stored in the `./data` subfolder next to `compose.yml`. Back this folder up to keep your trade history safe.
+
+### Updating to a new version
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+## Using the Application
+
+### First-time setup
+
+After the app starts, navigate to **Config** (gear icon in the sidebar) and:
+
+1. **Add Assets** — Add the tickers you trade (e.g. BTC, ETH, SOL, AAPL). Set the decimal precision for native P&L display.
+2. **Add Strategies** — Name your trading strategies (e.g. "Breakout", "Mean Reversion").
+3. **Add Confluences** — Define your signal checklist items (e.g. "HTF trend aligned", "Volume spike", "Key level").
+
+### Logging a trade
+
+Go to **Journal** → click **New Trade**.
+
+The form has four tabs:
+
+| Tab | What to fill in |
+|---|---|
+| **Entry** | Asset, strategy, direction (Long/Short), entry tranches (price + size), stop-loss, TP levels |
+| **Context** | Confluences that were present, reasoning, TradingView snapshot URLs |
+| **Psychology** | Pre-trade emotion, post-trade reflection, mistakes made |
+| **Results** | Exit tranches (price + size), close date, realized P&L |
+
+Trades can be partially filled — e.g. log entry first, then come back to fill in exits after closing.
+
+### Dashboard
+
+The **Dashboard** page shows aggregated stats filterable by **asset** and **strategy**:
+
+- Total trades, win rate, average RR
+- Cumulative P&L equity curve
+- Stats are shown in **native asset units** when filtered by asset, or **USD** otherwise
+
+### Daily Journal
+
+The **Diary** page lets you log daily analysis notes and attach TradingView chart snapshot URLs. Use it to record market observations and how you felt before/after trading sessions.
+
+### Position Calculator
+
+The **Position Calc** page helps size a position given your account size, risk percentage, entry price, and stop-loss level.
+
+---
+
 ## Project Structure
 
 ```

@@ -1,0 +1,15 @@
+services:
+  trading-journal:
+    image: gamerbeaker007/trading-journal:latest
+    container_name: trading-journal
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: file:/data/journal.db
+      # Set a password to protect the app (leave blank for open access)
+      ADMIN_PASSWORD: "changeme"
+      # Generate with: openssl rand -base64 32
+      AUTH_SECRET: "replace-with-your-generated-secret"
+    volumes:
+      - ./data:/data

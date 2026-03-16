@@ -1,5 +1,7 @@
-import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
+
 import { ConfigClient } from "@/components/config/ConfigClient";
+import { prisma } from "@/lib/prisma";
 import { Typography } from "@mui/material";
 
 export default async function ConfigPage() {

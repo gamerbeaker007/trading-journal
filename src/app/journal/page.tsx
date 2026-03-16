@@ -1,6 +1,8 @@
+export const dynamic = "force-dynamic";
+
+import { JournalClient } from "@/components/journal/JournalClient";
 import { getTradesAction } from "@/lib/db/trades";
 import { prisma } from "@/lib/prisma";
-import { JournalClient } from "@/components/journal/JournalClient";
 
 export default async function JournalPage() {
   const [trades, strategies, assets, confluences] = await Promise.all([
